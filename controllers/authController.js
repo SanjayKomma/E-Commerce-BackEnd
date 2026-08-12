@@ -16,7 +16,7 @@ const authController = {
             return response.status(201).json({message: 'User created successfully', user:user});
         }
         catch(error){
-            return response.status(500).json({message: 'Internal server error', error: error});
+            return response.status(500).json({message: 'Internal server error', error: error.message});
         }
     },
     Login: async(request, response) =>{
@@ -45,16 +45,12 @@ const authController = {
     },
     GetProfile: async(request, response) => {
         try{
-            const token = request.cookies.token;
-            if(!token){
-                return response.status(401).json({message: 'User not authenticated'});
-            }
-            const verifyUser = jwt.verify(token, JWT_SECRET);
-            const user = await User.findById(verifyUser.userId).select('-password', '-__v');
-            return response.status(200).json({message: 'User profile fetched successfully', user: user});
+            const userId = request.userId;
+            const user = await User.findById(userId).select('-password -__v');
+            return response.status(200).json({message: 'User profile fetched successfully', user});
         }
         catch(error){
-            return response.status(500).json({message: 'Internal server error', error: error});
+            return response.status(500).json({message: 'Internal server error', error: error.message});
         }
     },
     Logout: async(request, response) => {
