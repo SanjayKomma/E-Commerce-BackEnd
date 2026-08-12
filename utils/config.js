@@ -5,10 +5,12 @@ const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 const JWT_SECRET = process.env.JWT_SECRET;
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
+const ENV = process.env.ENV;
 module.exports = {
     MONGODB_URI,
     PORT,
     HOST,
     JWT_SECRET,
-    SALT_ROUNDS
+    SALT_ROUNDS,
+    ENV
 };
