@@ -13,7 +13,7 @@ const authController = {
             const hashedPassword = await bcrypt.hash(password, parseInt(SALT_ROUNDS));
             const user = new User({name, email, password: hashedPassword});
             await user.save();
-            return response.status(201).json({message: 'User created successfully', user:user});
+            return response.status(201).json({message: 'User created successfully'});
         }
         catch(error){
             return response.status(500).json({message: 'Internal server error', error: error.message});

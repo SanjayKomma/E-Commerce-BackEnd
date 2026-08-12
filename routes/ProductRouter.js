@@ -1,0 +1,10 @@
+const {getAllProducts, getProductById, createProduct, updateProduct, deleteProduct} = require('../controllers/productController');
+const {isAuthenticated, allowRoles} = require('../middlewares/auth');
+const express = require('express');
+const productRouter = express.Router();
+productRouter.get('/',isAuthenticated, getAllProducts);
+productRouter.get('/:id',isAuthenticated, getProductById);
+productRouter.post('/create',isAuthenticated, allowRoles(['admin', 'seller']), createProduct);
+productRouter.put('/:id',isAuthenticated, allowRoles(['admin', 'seller']), updateProduct);
+productRouter.delete('/:id',isAuthenticated, allowRoles(['admin', 'seller']), deleteProduct);
+module.exports = productRouter;
