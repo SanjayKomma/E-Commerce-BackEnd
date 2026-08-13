@@ -1,4 +1,22 @@
 const mongoose = require('mongoose');
+const addressSchema = new mongoose.Schema({
+    street:{
+        type:String,
+    },
+    city:{
+        type:String,
+    },
+    ZipCode:{
+        type:String,
+    },
+    country:{
+        type:String
+    },
+    isDefault:{
+        type:Boolean,
+        default:false
+    }
+})
 const userSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -21,8 +39,13 @@ const userSchema = new mongoose.Schema({
     phone:{
         type:String,
     },
-    address:{
-        type:String,
-    }
+    address:[addressSchema],
 }, {timestamps: true});
+userSchema.set('toJSON', {
+    transform: (doc, ret) => {
+        delete ret.password;
+        delete ret.__v;
+        return ret;
+    }
+});
 module.exports = mongoose.model('User', userSchema);
