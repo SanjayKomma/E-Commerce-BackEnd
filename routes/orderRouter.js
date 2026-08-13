@@ -1,3 +1,10 @@
 const express = require('express');
+const {isAuthenticated} = require('../middlewares/auth');
+const { createOrder, getMyOrders, getOrderById, cancelOrder } = require('../controllers/orderController');
 const orderRouter = express.Router();
+orderRouter.use(isAuthenticated);
+orderRouter.post('/create', createOrder);
+orderRouter.get('/', getMyOrders);
+orderRouter.get('/:id', getOrderById);
+orderRouter.patch('/:id', cancelOrder);
 module.exports = orderRouter;
