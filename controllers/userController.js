@@ -73,6 +73,26 @@ const userController ={
         catch(error){
             return response.status(500).json({message: error.message});
         }
+    },
+    deleteAddress: async (request, response) => {
+        const userId = request.userId;
+        const addressId = request.params.addressId;
+        try{
+            const user = await User.findById(userId);
+            if(!user){
+                return response.status(404).json({message:'User not found'});
+            }
+            const address = user.address.find(address => address._id.toString() === addressId);
+            if(!address){
+                return response.status(404).json({message:'Address not found'});
+            }
+            user.address = user.address.filter(address => address._id.toString() !== addressId);
+            await user.save();
+            return response.status(200).json({message:'Address deleted successfully', user});
+        }
+        catch(error){
+            return response.status(500).json({message: error.message});
+        }
     }
 }
 module.exports = userController;
