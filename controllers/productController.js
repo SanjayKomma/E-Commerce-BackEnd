@@ -69,6 +69,42 @@ const productController = {
         catch(error){
             return response.status(500).json({message: 'Internal server error', error: error.message});
         }
+    },
+    getProducts: async (request, response) => {
+        try{
+            const {name, keyword, category, minPrice, maxPrice, sortBy, page, limit} = request.query;
+            const query = {};
+            if(keyword){
+                query.$or = [
+                    {name : {$regex : keyword, $options: 'i'}},
+                    {description : {$regex : keyword, $options: 'i'}}
+                ];
+            }
+            if(category){
+                query.category = category;
+            }
+            if(minPrice || maxPrice){
+                query.price = {};
+                if(minPrice) query.price.$gte = Number(minPrice);
+                if(maxPrice) query.price.$lte = Number(maxPrice);
+            }
+            let sortOptions = {createdAt: -1};
+            if(sortBy === 'price_asc') sortOptions = {price: 1};
+            if(sortBy === 'price_desc') sortOptions = {price: -1};
+            if(sortBy === 'rating') sortOptions = {rating: -1};
+            const pageNum = parseInt(page) || 1;
+            const limitNum = parseInt(limit) || 10;
+            const skip = (pageNum - 1) * limitNum;
+            const totalDocuments = await Product.countDocuments(query);
+            const products = await Product.find(query)
+                .sort(sortOptions)
+                .skip(skip)
+                .limit(limitNum);
+            return response.status(200).json({products, page:pageNum, pages: Math.ceil(totalDocuments/limitNum), totalDocuments});
+        }
+        catch(error){
+            return response.status(500).json({message: 'Internal server error', error: error.message});
+        }
     }
 }
 module.exports = productController;

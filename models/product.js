@@ -1,4 +1,23 @@
 const mongoose = require('mongoose');
+const reviewSchema = new mongoose.Schema({
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
+        required:true
+    },
+    name:{
+        type:String,
+        required:true
+    },
+    rating:{
+        type:Number,
+        min:1,
+        max:5
+    },
+    comments:{
+        type:String,
+    }
+}, {timestamps: true});
 const productSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -25,10 +44,12 @@ const productSchema = new mongoose.Schema({
     image:{
         type:String,
     },
+    reviews:[reviewSchema],
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true
     }
 }, {timestamps: true});
+productSchema.index({name:'text', description:'text'});
 module.exports = mongoose.model('Product', productSchema);
