@@ -9,8 +9,8 @@ mongoose
     .then(() => {
         console.log('Connected to MongoDB');
         app
-            .listen(PORT, HOST, ()=>{
-                console.log(`Server is running on port http://${HOST}:${PORT}`);
+            .listen(PORT, ()=>{
+                console.log(`Server is running on port http://${PORT}`);
             })
             .on('error', (err) => {
                 console.log("Error in server", err);
