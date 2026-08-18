@@ -1,4 +1,5 @@
 const Product = require('../models/product.js');
+const User = require('../models/user.js');
 const productController = {
     getAllProducts: async (request, response) => {
         try{
@@ -101,6 +102,38 @@ const productController = {
                 .skip(skip)
                 .limit(limitNum);
             return response.status(200).json({products, page:pageNum, pages: Math.ceil(totalDocuments/limitNum), totalDocuments});
+        }
+        catch(error){
+            return response.status(500).json({message: 'Internal server error', error: error.message});
+        }
+    },
+    createProductReview : async (request, response) => {
+        try{
+            const {rating, comments} = request.body;
+            const productId = request.params.id;
+            const userId = request.userId;
+            const product = await Product.findById(productId);
+            if(!product){
+                return response.status(404).json({message: 'Product not found'});
+            }
+            const user = await User.findById(userId);
+            const alreadyReviewed = product.reviews.find((review)=> review.product.toString() === productId.toString() && review.user.toString() === userId.toString());
+            if(alreadyReviewed){
+                alreadyReviewed.rating = Number(rating);
+                alreadyReviewed.comments = comments;
+            }
+            else{
+                product.reviews.push({
+                    name : user.name,
+                    rating: Number(rating),
+                    comments,
+                    user: userId
+                });
+            }
+            product.numberOfReviews = product.reviews.length;
+            product.rating = product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length;
+            await product.save();
+            return response.status(201).json({message: alreadyReviewed ? 'Review updated successfully' : 'Review added successfully', product: product});
         }
         catch(error){
             return response.status(500).json({message: 'Internal server error', error: error.message});
