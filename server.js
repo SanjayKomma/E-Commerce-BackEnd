@@ -2,7 +2,7 @@ const dns = require('dns');
 const app = require("./app");
 const cors = require('cors');
 dns.setServers(['8.8.8.8', '1.1.1.1']);
-const { MONGODB_URI, PORT, HOST } = require('./utils/config');
+const { MONGODB_URI, PORT, HOST, CLIENT_URL } = require('./utils/config');
 const mongoose = require('mongoose');
 mongoose
     .connect(MONGODB_URI)
@@ -33,6 +33,7 @@ app.use(
         callback(new Error('Not allowed by CORS'));
       }
     },
-    credentials: true, // Crucial for HTTP-only cookies across domains
+    credentials: true, 
+    allowedHeaders:['Content-Type', 'Authorization']
   })
 );
