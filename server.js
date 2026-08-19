@@ -19,21 +19,3 @@ mongoose
     .catch((err) => {
         console.log("Error connecting to MongoDB", err.message);
     });
-const allowedOrigins = [
-  'http://localhost:5173', // Local Vite dev
-  process.env.CLIENT_URL,  // Deployed frontend URL
-];
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true, 
-    allowedHeaders:['Content-Type', 'Authorization'],
-  })
-);

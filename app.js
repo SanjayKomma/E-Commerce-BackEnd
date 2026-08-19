@@ -6,6 +6,24 @@ const cartRouter = require('./routes/cartRouter');
 const orderRouter = require('./routes/orderRouter');
 const userRouter = require('./routes/userRouter');
 const app = express();
+const allowedOrigins = [
+  'http://localhost:5173', // Local Vite dev
+  process.env.CLIENT_URL,  // Deployed frontend URL
+];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, 
+    allowedHeaders:['Content-Type', 'Authorization'],
+  })
+);
+app.options('*', cors());
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api/v1/auth', authRouter);
