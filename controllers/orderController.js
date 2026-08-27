@@ -64,7 +64,7 @@ const orderController = {
     getOrderById: async (request, response) => {
         try{
             const userId = request.userId;
-            const {orderId} = request.params.orderId;
+            const orderId = request.params.orderId;
             const order = await Order.findOne({_id:orderId, user:userId}).populate('items.product', '-__v');
             if(!order){
                 return response.status(404).json({message: 'Order not found'});
