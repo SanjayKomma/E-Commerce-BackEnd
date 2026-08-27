@@ -78,7 +78,7 @@ const orderController = {
     cancelOrder: async (request, response) => {
         try{
             const userId = request.userId;
-            const { orderId } = request.params;
+            const orderId = request.params.id;
             const order = await Order.findOne({_id:orderId, user:userId});
             if(!order){
                 return response.status(404).json({message:'Order not found'});
