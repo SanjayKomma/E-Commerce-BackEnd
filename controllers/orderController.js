@@ -51,7 +51,7 @@ const orderController = {
     getMyOrders: async (request, response) => {
         try{
             const userId = request.userId;
-            const orders = await Order.findOne({user:userId}).populate('items.product', '-__v').sort({createdAt:-1});
+            const orders = await Order.find({user:userId}).populate('items.product').sort({createdAt:-1});
             if(!orders){
                 return response.status(404).json({message:'No orders found'});
             }
