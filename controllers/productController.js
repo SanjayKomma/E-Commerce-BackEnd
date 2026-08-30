@@ -45,30 +45,47 @@ const productController = {
         }
     },
     updateProduct: async (request, response) => {
-        try{
-            const {id} = request.params;
-            const updates = request.body;
-            const product = await Product.findByIdAndUpdate(id, updates, {new: true});
-            if(!product){
-                return response.status(404).json({message: 'Product not found'});
+        try {
+            const { id } = request.params;
+            const product = await Product.findById(id);
+
+            if (!product) {
+                return response.status(404).json({ message: 'Product not found' });
             }
-            return response.status(200).json({message: 'Product updated successfully', product: product});
-        }
-        catch(error){
-            return response.status(500).json({message: 'Internal server error', error: error.message});
+
+            const isAdmin = request.user.role === 'admin';
+            const isOwner = product.createdBy && product.createdBy.toString() === request.userId.toString();
+
+            if (!isAdmin && !isOwner) {
+                return response.status(403).json({ message: 'Forbidden: You can only edit your own products' });
+            }
+
+            const updatedProduct = await Product.findByIdAndUpdate(id, request.body, { new: true, runValidators: true });
+            return response.status(200).json({ message: 'Product updated successfully', product: updatedProduct });
+        } catch (error) {
+            return response.status(500).json({ message: 'Internal server error', error: error.message });
         }
     },
     deleteProduct: async (request, response) => {
-        try{
-            const {id} = request.params;
-            const product = await Product.findByIdAndDelete(id);
-            if(!product){
-                return response.status(404).json({message: 'Product not found'});
+        try {
+            const { id } = request.params;
+            const product = await Product.findById(id);
+
+            if (!product) {
+                return response.status(404).json({ message: 'Product not found' });
             }
-            return response.status(200).json({message: 'Product deleted successfully'});
-        }
-        catch(error){
-            return response.status(500).json({message: 'Internal server error', error: error.message});
+
+            const isAdmin = request.user.role === 'admin';
+            const isOwner = product.createdBy && product.createdBy.toString() === request.userId.toString();
+
+            if (!isAdmin && !isOwner) {
+                return response.status(403).json({ message: 'Forbidden: You can only delete your own products' });
+            }
+
+            await Product.findByIdAndDelete(id);
+            return response.status(200).json({ message: 'Product deleted successfully' });
+        } catch (error) {
+            return response.status(500).json({ message: 'Internal server error', error: error.message });
         }
     },
     getProducts: async (request, response) => {
