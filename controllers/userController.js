@@ -2,6 +2,52 @@ const User = require('../models/user');
 const { SALT_ROUNDS } = require('../utils/config');
 const bcrypt = require('bcryptjs');
 const userController ={
+    getAllUsers: async (request, response) => {
+        try{
+            const users = await User.find({}).select('-password -__v');
+            if(!users){
+                return response.status(404).json({message: 'No users found'});
+            }
+            return response.status(200).json({message: 'All users fetched successfully', users: users});
+        }
+        catch(error){
+            return response.status(500).json({message: error.message});
+        }
+    },
+    updateUserRole: async (request, response) => {
+        try{
+            const {id} = request.params;
+            const {role} = request.body;
+            const validRoles = ['admin', 'buyer', 'seller'];
+            if(!validRoles.includes(role)){
+                return response.status(400).json({message: 'Invalid role'});
+            }
+            const user = await User.findByIdAndUpdate(id, {role}, {new: true, runValidators: true}).select('-password -__v');
+            if(!user){
+                return response.status(404).json({message: 'User not found'});
+            }
+            return response.status(200).json({message: 'User role updated successfully', user});
+        }
+        catch(error){
+            return response.status(500).json({message: error.message});
+        }
+    },
+    deleteUser: async (request, response) => {
+        try{
+            const {id} = request.params;
+            if(id.toString() === request.userId.toString()){
+                return response.status(400).json({message: 'You cannot delete yourself'});
+            }
+            const user = await User.findByIdAndDelete(id);
+            if(!user){
+                return response.status(404).json({message: 'User not found'});
+            }
+            return response.status(200).json({message: 'User deleted successfully'});
+        }
+        catch(error){
+            return response.status(500).json({message: error.message});
+        }
+    },
     updateProfile: async (request, response) => {
         try{
             const userId = request.userId;

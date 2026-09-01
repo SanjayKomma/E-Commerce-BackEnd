@@ -1,10 +1,13 @@
 const express = require('express');
-const { isAuthenticated } = require('../middlewares/auth');
-const { updateProfile, addAddress, changePassword, deleteAddress } = require('../controllers/userController');
+const { isAuthenticated, allowRoles } = require('../middlewares/auth');
+const { updateProfile, addAddress, changePassword, deleteAddress, getAllUsers, updateUserRole, deleteUser } = require('../controllers/userController');
 const userRouter = express.Router();
 userRouter.use(isAuthenticated);
 userRouter.put('/profile', updateProfile);
 userRouter.post('/address', addAddress);
 userRouter.put('/password', changePassword);
 userRouter.delete('/address/:addressId', deleteAddress);
+userRouter.get('/users', allowRoles('admin'), getAllUsers);
+userRouter.put('/:id/role', allowRoles('admin'), updateUserRole);
+useeRouter.delete('/:id', allowRoles('admin'), deleteUser);
 module.exports = userRouter;
