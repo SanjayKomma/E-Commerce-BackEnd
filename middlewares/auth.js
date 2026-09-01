@@ -36,7 +36,7 @@ const allowRoles = (...roles) => {
             return response.status(401).json({ message: 'Authentication required' });
         }
 
-        if (!roles.includes(request.user.role)) {
+        if (!allowed.includes(request.user.role)) {
             return response.status(403).json({
                 message: `Forbidden: role '${request.user.role}' is not allowed to perform this action`
             });
