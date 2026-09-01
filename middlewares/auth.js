@@ -30,6 +30,7 @@ const isAuthenticated = async (request, response, next) => {
 };
 
 const allowRoles = (...roles) => {
+    const allowed = roles.flat();
     return (request, response, next) => {
         if (!request.user) {
             return response.status(401).json({ message: 'Authentication required' });
