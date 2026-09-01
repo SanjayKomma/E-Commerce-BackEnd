@@ -9,5 +9,5 @@ userRouter.put('/password', changePassword);
 userRouter.delete('/address/:addressId', deleteAddress);
 userRouter.get('/all', allowRoles('admin'), getAllUsers);
 userRouter.put('/:id/role', allowRoles('admin'), updateUserRole);
-useeRouter.delete('/:id', allowRoles('admin'), deleteUser);
+userRouter.delete('/:id', allowRoles('admin'), deleteUser);
 module.exports = userRouter;
