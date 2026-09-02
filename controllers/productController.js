@@ -28,13 +28,14 @@ const productController = {
     },
     createProduct: async (request, response) => {
         try{
-            const {name, description, price, category, image} = request.body;
+            const {name, description, price, category, image, stock} = request.body;
             const product = new Product({
                 name,
                 description,
                 price,
                 category,
                 image : image || null,
+                stock: stock !== undefined ? Number(stock) : 0,
                 createdBy: request.userId
             });
             await product.save();
