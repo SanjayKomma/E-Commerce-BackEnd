@@ -6,6 +6,7 @@ const productRouter = require('./routes/productRouter');
 const cartRouter = require('./routes/cartRouter');
 const orderRouter = require('./routes/orderRouter');
 const userRouter = require('./routes/userRouter');
+const wishlistRoutes = require('./routes/wishlistRoutes');
 const app = express();
 const allowedOrigins = [
   'http://localhost:5173', // Local Vite dev
@@ -31,4 +32,5 @@ app.use('/api/v1/products', productRouter);
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/wishlist', wishlistRoutes);
 module.exports = app;
