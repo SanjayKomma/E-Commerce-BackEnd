@@ -155,6 +155,19 @@ const productController = {
         catch(error){
             return response.status(500).json({message: 'Internal server error', error: error.message});
         }
+    },
+    // Append to controllers/productController.js
+    getSellerProducts: async (request, response) => {
+        try {
+            const sellerId = request.userId;
+            const products = await Product.find({ createdBy: sellerId }).sort({ createdAt: -1 });
+            return response.status(200).json({
+                message: 'Seller products fetched successfully',
+                products
+            });
+        } catch (error) {
+            return response.status(500).json({ message: 'Internal server error', error: error.message });
+        }
     }
 }
 module.exports = productController;

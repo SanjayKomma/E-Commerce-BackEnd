@@ -1,4 +1,4 @@
-const {getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, getProducts, createProductReview} = require('../controllers/productController');
+const {getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, getProducts, createProductReview, getSellerProducts} = require('../controllers/productController');
 const {isAuthenticated, allowRoles} = require('../middlewares/auth');
 const express = require('express');
 const productRouter = express.Router();
@@ -6,7 +6,9 @@ productRouter.get('/',isAuthenticated, getAllProducts);
 productRouter.get('/:id', getProductById);
 productRouter.get('/search',isAuthenticated, getProducts);
 productRouter.post('/create',isAuthenticated, allowRoles(['admin', 'seller']), createProduct);
+productRouter.get('/seller/mine', isAuthenticated, allowRoles('seller', 'admin'), getSellerProducts);
 productRouter.put('/:id',isAuthenticated, allowRoles(['admin', 'seller']), updateProduct);
 productRouter.delete('/:id',isAuthenticated, allowRoles(['admin', 'seller']), deleteProduct);
 productRouter.post('/:id/review',isAuthenticated, createProductReview);
+
 module.exports = productRouter;
