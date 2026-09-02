@@ -49,30 +49,40 @@ const userController ={
         }
     },
     updateProfile: async (request, response) => {
-        try{
+        try {
             const userId = request.userId;
-            const {name, email, phone, address} = request.body;
+            const { 
+                name, 
+                email, 
+                phone, 
+                address,
+                storeName,
+                tagline,
+                bio,
+                shippingPolicy 
+            } = request.body;
+
             const user = await User.findById(userId);
-            if(!user){
-                return response.status(404).json({message:'User not found'});
+            if (!user) {
+                return response.status(404).json({ message: 'User not found' });
             }
-            if(name){
-                user.name = name;
-            }
-            if(email){
-                user.email = email;
-            }
-            if(phone){
-                user.phone = phone;
-            }
-            if(address){
-                user.address = address;
-            }
+
+            // Basic info
+            if (name) user.name = name;
+            if (email) user.email = email;
+            if (phone !== undefined) user.phone = phone;
+            if (address) user.address = address;
+
+            // Storefront info
+            if (storeName !== undefined) user.storeName = storeName;
+            if (tagline !== undefined) user.tagline = tagline;
+            if (bio !== undefined) user.bio = bio;
+            if (shippingPolicy !== undefined) user.shippingPolicy = shippingPolicy;
+
             await user.save();
-            return response.status(200).json({message: 'Profile updated successfully', user});
-        }
-        catch(error){
-            return response.status(500).json({message: error.message});
+            return response.status(200).json({ message: 'Profile updated successfully', user });
+        } catch (error) {
+            return response.status(500).json({ message: error.message });
         }
     },
     addAddress: async (request, response) => {
