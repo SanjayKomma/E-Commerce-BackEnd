@@ -1,10 +1,12 @@
 const express = require('express');
 const {isAuthenticated} = require('../middlewares/auth');
-const { createOrder, getMyOrders, getOrderById, cancelOrder } = require('../controllers/orderController');
+const { createOrder, getMyOrders, getOrderById, cancelOrder, getSellerOrders, updateItemShipmentStatus } = require('../controllers/orderController');
 const orderRouter = express.Router();
 orderRouter.use(isAuthenticated);
 orderRouter.post('/create', createOrder);
 orderRouter.get('/', getMyOrders);
+orderRouter.get('/seller/orders', isAuthenticated,allowRoles('seller', 'admin'), getSellerOrders);
+orderRouter.put('/:id/items/:id/status', isAuthenticated, allowRoles('admin', 'seller'), updateItemShipmentStatus);
 orderRouter.get('/:id', getOrderById);
 orderRouter.patch('/:id', cancelOrder);
 module.exports = orderRouter;

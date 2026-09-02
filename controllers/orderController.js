@@ -99,6 +99,85 @@ const orderController = {
         catch(error){
             response.status(500).json({message:error.message});
         }
+    },
+    getSellerOrders: async (request, response) => {
+        try {
+        const sellerId = request.userId;
+
+        // 1. Find all products created by this seller
+        const sellerProducts = await Product.find({ createdBy: sellerId }).select('_id');
+        const sellerProductIds = sellerProducts.map((p) => p._id);
+
+        // 2. Find orders containing any of these products
+        const orders = await Order.find({ 'items.product': { $in: sellerProductIds } })
+            .populate('user', 'name email')
+            .populate('items.product', 'name price image createdBy')
+            .sort({ createdAt: -1 });
+
+        // 3. Filter order items so sellers only see their own items
+        const sanitizedOrders = orders.map((order) => {
+            const myItems = order.items.filter((item) =>
+            sellerProductIds.some((pId) => pId.toString() === item.product?._id.toString())
+            );
+
+            return {
+            _id: order._id,
+            createdAt: order.createdAt,
+            user: order.user,
+            shippingAddress: order.shippingAddress,
+            paymentMethod: order.paymentMethod,
+            isPaid: order.isPaid,
+            items: myItems,
+            sellerTotal: myItems.reduce((acc, item) => acc + (item.price * item.quantity), 0)
+            };
+        });
+
+        return response.status(200).json({
+            message: 'Seller orders retrieved successfully',
+            orders: sanitizedOrders
+        });
+        } catch (error) {
+        return response.status(500).json({ message: 'Internal server error', error: error.message });
+        }
+    },
+
+    updateItemShipmentStatus: async (request, response) => {
+        try {
+        const { orderId, productId } = request.params;
+        const { itemStatus, trackingNumber } = request.body;
+        const sellerId = request.userId;
+
+        // Verify seller owns this product
+        const product = await Product.findOne({ _id: productId, createdBy: sellerId });
+        if (!product && request.user?.role !== 'admin') {
+            return response.status(403).json({ message: 'Unauthorized to update this item shipment' });
+        }
+
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return response.status(404).json({ message: 'Order not found' });
+        }
+
+        const item = order.items.find(
+            (it) => it.product.toString() === productId.toString()
+        );
+
+        if (!item) {
+            return response.status(404).json({ message: 'Item not found in order' });
+        }
+
+        if (itemStatus) item.itemStatus = itemStatus;
+        if (trackingNumber !== undefined) item.trackingNumber = trackingNumber;
+
+        await order.save();
+
+        return response.status(200).json({
+            message: 'Fulfillment status updated successfully',
+            order
+        });
+        } catch (error) {
+        return response.status(500).json({ message: 'Internal server error', error: error.message });
+        }
     }
 };
 module.exports = orderController;
