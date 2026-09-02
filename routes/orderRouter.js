@@ -6,7 +6,7 @@ orderRouter.use(isAuthenticated);
 orderRouter.post('/create', createOrder);
 orderRouter.get('/', getMyOrders);
 orderRouter.get('/seller/orders', isAuthenticated, allowRoles('seller', 'admin'), getSellerOrders);
-orderRouter.put('/:orderId/items/productId/status', isAuthenticated, allowRoles('admin', 'seller'), updateItemShipmentStatus);
+orderRouter.put('/:orderId/items/:productId/status', isAuthenticated, allowRoles('admin', 'seller'), updateItemShipmentStatus);
 orderRouter.get('/:id', getOrderById);
 orderRouter.patch('/:id', cancelOrder);
 module.exports = orderRouter;
