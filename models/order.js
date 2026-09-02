@@ -1,48 +1,60 @@
 const mongoose = require('mongoose');
+
 const orderItemSchema = new mongoose.Schema({
-    product:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Product',
-        required:true
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true
     },
-    quantity:{
-        type:Number,
-        required:true
+    quantity: {
+        type: Number,
+        required: true
     },
-    price:{
-        type:Number,
-        required:true
+    price: {
+        type: Number,
+        required: true
+    },
+    itemStatus: {
+        type: String,
+        enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
+        default: 'Processing'
+    },
+    trackingNumber: {
+        type: String,
+        default: ''
     }
 });
+
 const orderSchema = new mongoose.Schema({
-    user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required:true
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    items:[orderItemSchema],
-    shippingAddress:{
-        street:{
-            type:String,
-            required:true
+    items: [orderItemSchema],
+    shippingAddress: {
+        street: {
+            type: String,
+            required: true
         },
-        city:{
-            type:String,
-            required:true
+        city: {
+            type: String,
+            required: true
         },
-        ZipCode:{
-            type:String,
-            required:true
+        ZipCode: {
+            type: String,
+            required: true
         },
-        country:{
-            type:String,
-            required:true
+        country: {
+            type: String,
+            required: true
         }
     },
-    status:{
-        type:String,
-        enum:['pending','processing','shipped', 'delivered','cancelled'],
-        default:'pending'
+    status: {
+        type: String,
+        enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+        default: 'pending'
     }
-}, {timestamps:true});
+}, { timestamps: true });
+
 module.exports = mongoose.model('Order', orderSchema);
