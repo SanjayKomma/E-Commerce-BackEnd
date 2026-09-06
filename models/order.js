@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const orderItemSchema = new mongoose.Schema({
     product: {
         type: mongoose.Schema.Types.ObjectId,
@@ -24,7 +23,6 @@ const orderItemSchema = new mongoose.Schema({
         default: ''
     }
 });
-
 const orderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -50,11 +48,29 @@ const orderSchema = new mongoose.Schema({
             required: true
         }
     },
+    totalAmount: {
+        type: Number,
+        required: true
+    },
     status: {
         type: String,
         enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
-        default: 'pending'
-    }
+        default: 'processing'
+    },
+    paymentMethod: {
+        type: String,
+        default: 'Razorpay'
+    },
+    paymentResult: {
+        id: String,
+        orderId: String,
+        signature: String,
+        status: { type: String, default: 'Completed' }
+    },
+    isPaid: {
+        type: Boolean,
+        default: false
+    },
+    paidAt: Date
 }, { timestamps: true });
-
 module.exports = mongoose.model('Order', orderSchema);

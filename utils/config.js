@@ -6,10 +6,14 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
 const SALT_ROUNDS = process.env.SALT_ROUNDS || 10;
 const ENV = process.env.NODE_ENV || process.env.ENV || 'development';
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET
 module.exports = {
     MONGODB_URI,
     PORT,
     JWT_SECRET,
     SALT_ROUNDS,
-    ENV
+    ENV,
+    RAZORPAY_KEY_ID,
+    RAZORPAY_KEY_SECRET
 };
